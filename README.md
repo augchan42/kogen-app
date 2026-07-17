@@ -1,6 +1,3 @@
-Certainly! I'll provide you with a more extensive README.md for your Kogen repository, including an explanation of workspaces. Here's a suggested structure for your README.md:
-
-```markdown:README.md
 # Kogen
 
 Kogen is a project that utilizes npm workspaces to manage multiple packages within a single repository.
@@ -14,6 +11,7 @@ Kogen is a project that utilizes npm workspaces to manage multiple packages with
   - [Installation](#installation)
 - [Development](#development)
 - [Testing Production Build](#testing-production-build)
+- [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -91,6 +89,20 @@ To build and serve the production version of the UI package:
    npx serve package/ui/dist
    ```
 
+## Troubleshooting
+
+### `TypeError: Cannot read properties of undefined (reading 'isBuffer')` when submitting an order
+
+This is caused by missing Node.js polyfills (`Buffer`, `crypto`, `stream`) in
+the browser bundle, which the Injective SDK depends on. The fix — configuring
+`vite-plugin-node-polyfills` instead of patching `keccak256` with
+`patch-package` — is documented in detail in the
+[UI package README](package/ui/README.md#nodejs-polyfills-fix-for-upstream-issue-96).
+See upstream issue [kogen-markets/app#96](https://github.com/kogen-markets/app/issues/96).
+
+If dependency-related errors persist after upgrading packages, clear Vite's
+dependency cache with `npm run vite` (removes `package/ui/node_modules/.vite/deps`).
+
 ## Contributing
 
 [Add information about how to contribute to the project]
@@ -98,8 +110,3 @@ To build and serve the production version of the UI package:
 ## License
 
 [Add license information for your project]
-```
-
-This README.md provides a more comprehensive overview of your project, including an explanation of workspaces and how to use them in the context of your project. It also includes sections for getting started, development, testing the production build, and placeholders for contributing guidelines and license information.
-
-Remember to replace placeholder information (like version numbers, repository URL, etc.) with the actual details of your project. You may also want to add more specific information about the Kogen project itself, its purpose, and any other relevant details.

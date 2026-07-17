@@ -1,6 +1,3 @@
-Certainly! Here's a README.md for the `shared` package:
-
-```markdown:package/shared/README.md
 # Kogen Shared
 
 The `@kogen/kogen-shared` package contains shared utilities and dependencies used across the Kogen project.
@@ -73,6 +70,3 @@ endLine: 15
 ## License
 
 [Add your license information here]
-```
-
-This README.md provides an overview of the `shared` package, including its features, setup instructions, usage, available scripts, and key dependencies. You may want to customize this further based on any specific requirements or additional information about your shared package.

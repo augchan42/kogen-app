@@ -1,6 +1,3 @@
-Certainly! Here's a README.md for the exercise-bot package:
-
-```markdown:package/exercise-bot/README.md
 # Exercise Bot
 
 Exercise Bot is a keeper that runs on AWS, designed to automatically exercise options on different blockchain networks.
@@ -75,6 +72,3 @@ Set up CloudWatch Logs to monitor the execution of your Lambda function. You can
 ## License
 
 [Add your license information here]
-```
-
-This README.md provides an overview of the exercise-bot package, including its purpose, setup instructions, usage, file structure, development guidelines, deployment information, and security considerations. You may want to customize it further based on the specific details of your implementation and any additional features or requirements of your bot.

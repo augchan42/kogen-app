@@ -1,6 +1,3 @@
-Certainly! I'll create a README.md for the UI package, making note of the polyfill. Here's the suggested content for the README.md file:
-
-```markdown:package/ui/README.md
 # Kogen UI
 
 This package contains the user interface for the Kogen project, built with React and Vite.
@@ -22,15 +19,11 @@ This package contains the user interface for the Kogen project, built with React
 
 ## Installation
 
-1. Navigate to the UI package directory:
-   ```
-   cd package/ui
-   ```
+Install dependencies from the repository root (this is an npm workspace):
 
-2. Install dependencies:
-   ```
-   npm install
-   ```
+```
+npm install
+```
 
 ## Development
 
@@ -44,19 +37,13 @@ This will start a Vite development server with hot module replacement.
 
 ## Building
 
-For development build:
-
-```
-npm run build:dev
-```
-
 For production build:
 
 ```
 npm run build:prod
 ```
 
-Both commands will create a build in the `dist` directory.
+This creates a build in the `dist` directory.
 
 ## Preview
 
@@ -74,9 +61,50 @@ Currently, there are no tests implemented. The test script exits successfully:
 npm test
 ```
 
-## Node Polyfills
+## Node.js polyfills (fix for upstream issue #96)
 
-This project uses `vite-plugin-node-polyfills` to provide Node.js polyfills for the browser environment. This is particularly useful when working with libraries that depend on Node.js built-in modules.
+The Injective SDK (`@injectivelabs/*`) and its transitive dependencies (notably
+`keccak256`) rely on Node.js built-ins such as `Buffer`, `crypto`, and
+`stream`, which do not exist in the browser and are not polyfilled by Vite by
+default. Without polyfills, submitting a bid or ask order crashes at runtime
+with:
+
+```
+TypeError: Cannot read properties of undefined (reading 'isBuffer')
+    at toBuffer (...)
+    at keccak256 (...)
+    at createTransactionWithSigners (...)
+```
+
+(Reported upstream as
+[kogen-markets/app#96](https://github.com/kogen-markets/app/issues/96).)
+
+The original workaround was a `patch-package` patch that hand-edited
+`node_modules/keccak256` to import `Buffer` and set it on `globalThis`. That
+approach was fragile — it broke whenever the dependency tree shifted — and has
+been removed in favor of configuring the bundler properly in
+[`vite.config.ts`](./vite.config.ts):
+
+- `vite-plugin-node-polyfills` is configured with
+  `include: ['crypto', 'stream', 'assert', 'util']`. The plugin also injects
+  the `Buffer` and `process` globals, which is what the crash was actually
+  about.
+- `resolve.alias` maps `stream` to `stream-browserify` (with `assert` and
+  `util` aliased to their npm polyfill packages) so bare imports of Node
+  built-ins resolve to browser-compatible implementations.
+- `optimizeDeps.include` lists `@metamask/obs-store` so Vite pre-bundles this
+  CommonJS dependency during dev.
+
+This fix was adopted upstream in
+[kogen-markets/app#98](https://github.com/kogen-markets/app/pull/98)
+("unpatch keccak"), which also removed `patch-package` from the repository
+entirely.
+
+If you see `Buffer`/`isBuffer`/`crypto`-related errors after upgrading wallet
+or Injective SDK dependencies, check that the polyfill configuration in
+`vite.config.ts` still covers the modules those packages expect. Clearing
+Vite's dependency cache can also help: `npm run vite` from the repository root
+(removes `package/ui/node_modules/.vite/deps`).
 
 ## Dependencies
 
@@ -94,12 +122,3 @@ For a full list of dependencies, please refer to the `package.json` file.
 ## Development Dependencies
 
 The project uses TypeScript, ESLint, and Prettier for code quality and formatting. Vite is used as the build tool.
-
-## License
-
-[Add your license information here]
-```
-
-This README.md provides an overview of the UI package, including its features, setup instructions, development and build commands, and key dependencies. It also mentions the use of the node polyfills plugin, which is important for developers to be aware of when working on the project.
-
-You may want to customize this further based on any specific requirements or additional information about your UI package.

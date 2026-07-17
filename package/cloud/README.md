@@ -1,4 +1,3 @@
-```markdown:package/cloud/README.md
 # Cloud Package
 
 The `cloud` package is responsible for building and deploying AWS Lambda functions using Pulumi and esbuild.
@@ -77,6 +76,3 @@ For a full list of dependencies, please refer to the `package.json` file.
 ## License
 
 [Add your license information here]
-```
-
-This README.md provides an overview of the `cloud` package, including its features, setup instructions, usage examples, and deployment information. It also references the relevant code blocks from your `lambda-builder.ts` file. You may want to customize this further based on any specific requirements or additional information about your cloud package.
